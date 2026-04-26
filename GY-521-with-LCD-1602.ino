@@ -14,6 +14,7 @@ LiquidCrystal lcd(7, 8, 9, 10, 11, 12); //initialize library with numbers of int
 
 const uint16_t Gy521_ReadsPerSecond = 200, Gy521_ReadInterval = 1000/Gy521_ReadsPerSecond; //miliseconds
 uint32_t currentTime, prevTime, prevTime_2; //count time in miliseconds, max is 4 294 967 295 ~~ 49,710269618055 days
+uint32_t counter;
 
 const int MPU_ADDR = 0x68; //I2C address of MPU-6050, If pin AD0 = HIGH -> I2C address = 0x69
 bool firstRead = true;     //First, second read of GY521
@@ -74,8 +75,9 @@ void loop() {
   index = map( analogRead(potentiometerPin), 0, 1023, 0, 5 ); //choose buffer size in seconds
 
   if(currentTime - prevTime_2 >= bufferSizeSeconds[index]*1000) {
-    finalMaxdXYZ = currentMaxdXYZ; Serial.print(currentTime); Serial.println(" ;    final max RESET");
-    
+    finalMaxdXYZ = currentMaxdXYZ; Serial.print(currentTime); Serial.print(" ;    final max RESET "); Serial.println(counter); Serial.println()
+
+    counter = 0;
     prevTime_2 = currentTime;
   }
 
@@ -88,6 +90,7 @@ void loop() {
   if(!firstRead && (currentTime - prevTime >= Gy521_ReadInterval)) { //SECOND read
     readFromGy521(x2, y2, z2);
     calcTotalDelta();
+    ++counter;
 
     if(prevdXYZ > dXYZ){
       currentMaxdXYZ = prevdXYZ;
@@ -101,7 +104,7 @@ void loop() {
     }
 
     if(currentMaxdXYZ > finalMaxdXYZ) {
-      finalMaxdXYZ = currentMaxdXYZ; Serial.print(currentTime); Serial.println(" ; final max SET");
+      finalMaxdXYZ = currentMaxdXYZ; //Serial.print(currentTime); Serial.println(" ; final max SET");
     }
 
     lcd.setCursor(0, 0); lcd.print("Max: "); lcd.print(convert_float_to_str(finalMaxdXYZ)); lcd.print("mm/s^2");
