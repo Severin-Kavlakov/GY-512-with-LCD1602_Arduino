@@ -10,10 +10,10 @@
   R/W - GND
   VSS - GND
   VCC - +5v */
-LiquidCrystal lcd(7, 8, 9, 10, 11, 12); //initialize library with numbers of interface pins
+LiquidCrystal lcd(7, 8, 9, 10, 11, 12); //init library with interface pins
 
-const uint16_t Gy521_ReadsPerSecond = 200, Gy521_ReadInterval = 1000/Gy521_ReadsPerSecond; //miliseconds
-uint32_t currentTime, prevTime, prevTime_2; //count time in miliseconds, max is 4 294 967 295 ~~ 49,710269618055 days
+const uint16_t Gy521_ReadsPerSecond = 200, Gy521_ReadInterval = 1000/Gy521_ReadsPerSecond; // in ms
+uint32_t currentTime, prevTime, prevTime_2; //count time in ms, max -> 4 294 967 295 = 49,710269618055 days
 uint32_t counter;
 
 const int MPU_ADDR = 0x68; //I2C address of MPU-6050, If pin AD0 = HIGH -> I2C address = 0x69
@@ -41,7 +41,7 @@ void readFromGy521(int16_t &x, int16_t &y, int16_t &z) { //+-32768 +; modifies o
   x = Wire.read()<<8 | Wire.read();    // read: 0x3B(ACCEL_XOUT_H) and 0x3C(ACCEL_XOUT_L)
   y = Wire.read()<<8 | Wire.read();    // read: 0x3D(ACCEL_YOUT_H) and 0x3E(ACCEL_YOUT_L)
   z = Wire.read()<<8 | Wire.read();    // read: 0x3F(ACCEL_ZOUT_H) and 0x40(ACCEL_ZOUT_L)
-/* // REGISTERS NAMES
+/* // REGISTER NAMES
   AcX=Wire.read()<<8|Wire.read();  // 0x3B (ACCEL_XOUT_H) & 0x3C (ACCEL_XOUT_L)
   AcY=Wire.read()<<8|Wire.read();  // 0x3D (ACCEL_YOUT_H) & 0x3E (ACCEL_YOUT_L)
   AcZ=Wire.read()<<8|Wire.read();  // 0x3F (ACCEL_ZOUT_H) & 0x40 (ACCEL_ZOUT_L)
@@ -67,7 +67,7 @@ void setup() {
   Wire.endTransmission(true);       //End transmission
   /*LCD setup - columns, rows*/
   lcd.begin(16, 2); 
-  Serial.begin(9600);               //Start serial communication 9600 bits/second
+  Serial.begin(9600);
 }
 void loop() {
   currentTime = millis();
