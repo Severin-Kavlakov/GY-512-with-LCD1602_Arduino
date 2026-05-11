@@ -12,6 +12,9 @@
   VCC - +5v */
 LiquidCrystal lcd(7, 8, 9, 10, 11, 12); //init library with interface pins
 
+
+
+
 const uint16_t Gy521_ReadsPerSecond = 200, Gy521_ReadInterval = 1000/Gy521_ReadsPerSecond; // in ms
 uint32_t currentTime, prevTime, prevTime_2; //count time in ms, max -> 4 294 967 295 = 49,710269618055 days
 uint32_t counter;
@@ -32,6 +35,9 @@ char* convert_float_to_str(float f) { dtostrf(f, sizeof(finalMaxdXYZOutput), 0/*
 char IndexOutput[2];
 char* convert_uint16_to_str(uint16_t i) { sprintf(IndexOutput, "%2d", i); return IndexOutput; }
 
+
+
+
 void readFromGy521(int16_t &x, int16_t &y, int16_t &z) { //+-32768 +; modifies original virables
   Wire.begin();
   Wire.beginTransmission(MPU_ADDR);    //Start communicating to MPU_ADDR
@@ -50,12 +56,16 @@ void readFromGy521(int16_t &x, int16_t &y, int16_t &z) { //+-32768 +; modifies o
   GyY=Wire.read()<<8|Wire.read();  // 0x45 (GYRO_YOUT_H) & 0x46 (GYRO_YOUT_L)
   GyZ=Wire.read()<<8|Wire.read();  // 0x47 (GYRO_ZOUT_H) & 0x48 (GYRO_ZOUT_L) */
 }
+
 void calcTotalDelta() {//19620 parts max = 2G ; 1G = 16384 parts = 9.81m/s^2 = 9810mm/s^2
   dX = abs(x2-x1);
   dY = abs(y2-y1);
   dZ = abs(z2-z1);
   dXYZ = (sqrt(dX*dX + dY*dY + dZ*dZ)/16384)*9810; //sum if vectors dX, dY, dZ, in mm/s^2
 }
+
+
+
 
 void setup() {
   pinMode(potentiometerPin, INPUT);
@@ -69,6 +79,7 @@ void setup() {
   lcd.begin(16, 2); 
   Serial.begin(9600);
 }
+
 void loop() {
   currentTime = millis();
   
@@ -107,7 +118,7 @@ void loop() {
       finalMaxdXYZ = currentMaxdXYZ; //Serial.print(currentTime); Serial.println(" ; final max SET");
     }
 
-    lcd.setCursor(0, 0); lcd.print("Max: "); lcd.print(convert_float_to_str(finalMaxdXYZ)); lcd.print("mm/s^2");
+    lcd.setCursor(0, 0); lcd.print("Max: "   ); lcd.print(convert_float_to_str (finalMaxdXYZ)            ); lcd.print("mm/s^2");
     lcd.setCursor(0, 1); lcd.print("Buffer: "); lcd.print(convert_uint16_to_str(bufferSizeSeconds[index])); lcd.print("s");
 
     prevTime = currentTime; //uses the same prevTime variable because only one of the 2 if's are executed at once
